@@ -12,8 +12,10 @@ services:
     ports:
       - "8071:8071"
     depends_on:
-    - pgbouncer
-    - redis
+      pgbouncer:
+        condition: service_ready
+      redis:
+        condition: service_healthy
 
   postgres:
     image: postgres:13.4
@@ -43,6 +45,12 @@ services:
     command: "--save 60 500 --appendonly yes --appendfsync everysec"
     volumes:
       - "redis-data:/data"
+    # Wait for the redis dataset to load from disk
+    healthcheck:
+      test: ["CMD", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
 
 volumes:
   postgres-data:
