@@ -47,7 +47,7 @@ services:
       - "redis-data:/data"
     # Wait for the redis dataset to load from disk
     healthcheck:
-      test: ["CMD", "redis-cli ping | grep PONG"]
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
       interval: 1s
       timeout: 3s
       retries: 5
